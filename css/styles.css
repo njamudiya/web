@@ -10826,7 +10826,7 @@ textarea.form-control-lg {
   }
 }
 body {
-  background-image: linear-gradient(rgba(47, 23, 15, 0.65), rgba(47, 23, 15, 0.65)), url("../assets/img/bg.jpg");
+  background-image: url("../assets/img/bg.jpg");
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
@@ -10854,7 +10854,7 @@ p {
 }
 .site-heading .site-heading-lower {
   font-size: 5rem;
-  font-weight: 100;
+  font-weight: 1000;
   line-height: 4rem;
 }
 
@@ -10963,7 +10963,7 @@ p {
 }
 @media (min-width: 992px) {
   .intro .intro-img {
-    width: 75%;
+    width: 50%;
     float: right;
   }
   .intro .intro-text {
@@ -11027,3 +11027,4 @@ p {
 .address strong {
   font-size: 1.2rem;
 }
+
