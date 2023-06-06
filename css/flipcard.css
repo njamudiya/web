@@ -33,7 +33,38 @@
   }
   
   .flip-card-back {
-    background-color: #ffffff;
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 35%;
+    width: 100%;    
     color: rgb(36, 3, 248);
     transform: rotateY(180deg);
+  }
+
+  a:link {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  
+  a:hover {
+    color: white;
+    font-weight: 700;
+    font-size: 2rem;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+  
+  a:active {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    background-color: transparent;
+    text-decoration: underline;
   }
