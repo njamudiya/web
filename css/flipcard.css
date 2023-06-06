@@ -12,7 +12,6 @@
     text-align: center;
     transition: transform 0.6s;
     transform-style: preserve-3d;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   }
   
   .flip-card:hover .flip-card-inner {
@@ -45,7 +44,6 @@
   }
 
   a:link {
-    color: yellow;
     font-weight: 700;
     font-size: 2rem;
     background-color: transparent;
@@ -54,7 +52,6 @@
   
   
   a:hover {
-    color: yellow;
     font-weight: 700;
     font-size: 2rem;
     background-color: transparent;
@@ -62,7 +59,6 @@
   }
   
   a:active {
-    color: yellow;
     font-weight: 700;
     font-size: 1rem;
     background-color: transparent;
