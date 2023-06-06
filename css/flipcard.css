@@ -45,16 +45,16 @@
   }
 
   a:link {
-    color: white;
+    color: yellow;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 2rem;
     background-color: transparent;
     text-decoration: none;
   }
   
   
   a:hover {
-    color: white;
+    color: yellow;
     font-weight: 700;
     font-size: 2rem;
     background-color: transparent;
@@ -62,7 +62,7 @@
   }
   
   a:active {
-    color: white;
+    color: yellow;
     font-weight: 700;
     font-size: 1rem;
     background-color: transparent;
