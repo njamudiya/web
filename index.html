@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CSS -->
+
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
@@ -15,6 +17,24 @@ body, html {height: 100%}
   min-height: 100%;
   background-position: center;
   background-size: cover;
+}
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+  color: #fff;
+  text-align: center;
+  padding: 10px 0; /* Adjust padding to control footer height */
+}
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+.footer a:hover {
+  opacity: 0.7;
 }
 </style>
 </head>
@@ -29,24 +49,17 @@ body, html {height: 100%}
     <hr class="w3-border-grey" style="margin:auto;width:100%">
     <p class="w3-large w3-center">35 days left</p>
   </div>
-</body>
-<footer>
-  <div class="footer-container">
-    <a class="link footer-left" href="index.html">n.l.tkaczyk</a>
-    <div class="footer-icons">
-      <ul>
-        <li><a href="https://www.linkedin.com/in/nltkaczyk/" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a></li>
-        <li><a href="https://www.instagram.com/n.l.tkaczyk/" target="_blank"><i class="fa fa-instagram fa-2x"></i></a></li>
-        <li><a href="https://www.youtube.com/@n.l.tkaczyk/" target="_blank"><i class="fa fa-youtube fa-2x"></i></a></li>
-    </ul>
-    </div>
-    <a class="link footer-right" href="contact.html">contact</a>
-  </div>
-
-<div class="copyright">
-  <p style="color: #95AAB6;">
-    2023 &copy by Natalia Lidia Tkaczyk
-  </p>
 </div>
+
+<footer class="footer">
+  <div class="w3-xlarge">
+    <!-- Social Media Icons with Links -->
+    <a href="https://www.facebook.com/jamudiya" class="w3-hover-opacity"><i class="fab fa-facebook"></i></a>
+    <a href="https://twitter.com/jamudiya" class="w3-hover-opacity"><i class="fab fa-twitter"></i></a>
+    <a href="https://www.instagram.com/jamudiya" class="w3-hover-opacity"><i class="fab fa-instagram"></i></a>
+  </div>
+  <p>Follow us on social media</p>
 </footer>
+
+</body>
 </html>
