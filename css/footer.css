@@ -1,0 +1,18 @@
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+    color: #fff;
+    text-align: center;
+    padding: 10px 0; /* Adjust padding to control footer height */
+  }
+  .footer a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  .footer a:hover {
+    opacity: 0.7;
+  }
