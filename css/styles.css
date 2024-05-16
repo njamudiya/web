@@ -73,6 +73,7 @@ body{
   transform: translate(0, -50%);
   font-family: system-ui;
   display: none;
+  object-fit: cover;
 }
 
 
