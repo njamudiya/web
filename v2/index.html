@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        body {
+        display: flex;
+        flex-direction: column;
+        }
+
+        .scrolling-gallery {
+        width: auto;
+        overflow-y: clip;
+        display: flex;
+        overflow-x: scroll;
+        gap: 2px;
+        height:calc(100vh - 0px);
+        }
+
+        .image-container {
+        display: flex;
+        flex-direction: column;
+        height:100%;
+        }
+
+        .image-container img{
+        height:calc(100% - 40px);
+        }
+
+        .image-container h2{
+        height:40px;
+        font-size:10pt;
+        }
+    </style>
+
+    <body>
+        <div class="scrolling-gallery">
+        <div class="image-container">
+            <img src="./img1.jpg" />
+            <h2>Image 1</h2>
+        </div>
+        <div class="image-container">
+            <img  src="./img2.jpg" />
+            <h2>Image 2</h2>
+        </div>
+        <div class="image-container">
+            <img src="img3.jpg" />
+            <h2>Image 3</h2>
+        </div>
+        </div>
+    </body>
+
+</html>
