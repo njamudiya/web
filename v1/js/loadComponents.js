@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadComponent('header', 'header.html');
     loadComponent('footer', 'footer.html');
   });
   
