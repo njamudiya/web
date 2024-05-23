@@ -2,9 +2,10 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - Swaying photo gallery - scroll event</title>
-  <link rel="stylesheet" href="./style.css">
-
+  <title>Jamudiya</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/gallery.css">
+  <script src="./js/loadComponents.js" defer></script>
 </head>
 <body>
 <!-- partial:index.partial.html -->
@@ -21,14 +22,14 @@ Swaying photo gallery - hover event @wakana-k - https://codepen.io/wakana-k/pen/
 
 <main>
 	<div id="gallery">
-        <figure>
-			<img src="./img1.jpg" alt="Super Tree" title="Photo by Nitish Jamudiya">
-			<figcaption>Gardens by the bay</figcaption>
+		<figure><a href="#" class="gallery-link" data-images="gallery/coney/image1.jpeg,gallery/coney/image2.jpeg,gallery/coney/image3.jpeg,gallery/coney/image4.jpeg,gallery/coney/image5.jpeg,gallery/coney/image6.jpeg">
+			<img src="./gallery/coney/image1.jpeg" alt="Coney Island" title="Photo by Nitish Jamudiya">
+			<figcaption>Coney Island</figcaption>
+		</a>
 		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1610042560883-3cab6606b805?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODczNDB8&ixlib=rb-4.0.3&q=100&w=500" alt="Pink and blue clouds at sunset. " title="Photo by Jeremy Doddridge for Unsplash">
-			<figcaption>8 PM, Summer</figcaption>
-		</figure>
+
+		
+
 		<figure>
 			<div>
 				<div>
@@ -38,52 +39,31 @@ Swaying photo gallery - hover event @wakana-k - https://codepen.io/wakana-k/pen/
 				</div>
 			</div>
 		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1566228015668-4c45dbc4e2f5?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODczNDB8&ixlib=rb-4.0.3&q=100&w=500" alt="Low angle view up into a sky filled with deep blue clouds. " title="Photo by Matthew Brayer for Unsplash">
-			<figcaption>3 PM, Winter</figcaption>
+
+		<figure><a href="#" class="gallery-link" data-images="gallery/gbb/img1.jpg,gallery/gbb/img2.jpg,gallery/gbb/img3.jpg">
+			<img src="./gallery/gbb/img1.jpg" alt="Gardens by the bay" title="Photo by Nitish Jamudiya">
+			<figcaption>Gardens by the bay</figcaption>
+		</a>
 		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1525920980995-f8a382bf42c5?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODc0ODZ8&ixlib=rb-4.0.3&q=100&w=500" alt="Heavy gray clouds in the sky. " title="Photo by Simeon Muller for Unsplash">
-			<figcaption>10 AM, Summer Storm</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODc1Mjl8&ixlib=rb-4.0.3&q=100&w=500" alt="Deep orange clouds at sunset. " title="Photo by Laura Vinck for Unsplash">
-			<figcaption>5 PM, Autumn</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1583506140156-6e343f045b81?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODc1OTV8&ixlib=rb-4.0.3&q=100&w=500" alt="Clouds in shades of dark blue and magenta at sunset. " title="Photo by Szabo Viktor for Unsplash">
-			<figcaption>7 PM, Spring</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1493130952181-47e36589f64d?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMxODc2NTJ8&ixlib=rb-4.0.3&q=100&w=500" alt="Clouds in shades of blue and gold at sunrise. " title="Photo by Łukasz Łada for Unsplash">
-			<figcaption>6:30 AM, Summer</figcaption>
-		</figure>
-		<figure>
-			<img src='https://images.unsplash.com/photo-1514519334989-3d5c8b1a9f91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMyOTk0NzR8&ixlib=rb-4.0.3&q=100&w=500' alt='clouds and sky during daytime' title="Photo by Diego PH for Unsplash">
-			<figcaption>6 PM, Autumn</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1589517628174-5698bcf47311?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMyOTk4MTd8&ixlib=rb-4.0.3&q=100&w=500" alt="white clouds and blue sky. " title="Photo by Carlos Kenobi for Unsplash">
-			<figcaption>5 PM, Summer</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1509803874385-db7c23652552?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMzMDAwMDh8&ixlib=rb-4.0.3&q=100&w=500" alt="cloudy sky. " title="Photo by Alex Machado for Unsplash">
-			<figcaption>11 AM, Summer</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1563846465145-c733e29ee0f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTMzMDA5MDV8&ixlib=rb-4.0.3&q=100&w=500" alt="rainbow during daytime. " title="Photo by Yulia Gadalina for Unsplash">
-			<figcaption>2 PM, Spring Rainbow</figcaption>
-		</figure>
-		<figure>
-			<img src="https://images.unsplash.com/photo-1542272201-b1ca555f8505?ixlib=rb-4.0.3&q=100&w=jpg&crop=entropy&cs=srgb&w=500" alt="white sea of clouds. " title="Photo by Szabo Viktor for Unsplash">
-			<figcaption>4 PM, Autumn</figcaption>
-		</figure>
+
 	</div>
+
+	<div id="myModal" class="modal">
+		<span class="close">&times;</span>
+		<div class="modal-content">
+			<img id="galleryImg" src="" alt="Image Gallery">
+			<a class="prev">&#10094;</a>
+			<a class="next">&#10095;</a>
+		</div>
+	</div>
+
+	<script src="./js/galscript.js"></script>
+
 </main>
 
-<footer id='info'>Codepen by <a target="_blank" href="https://codepen.io/wakana-k/">Wakana Y.K.</a></footer>
+<div id="footer"></div>
 <!-- partial -->
-  <script  src="./script.js"></script>
+  <script  src="./js/script.js"></script>
 
 </body>
 </html>
