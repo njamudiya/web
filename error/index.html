@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gesture Fireworks & Shapes</title>
+    <title>3D Gesture Particle System</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        #ui {
+        body { margin: 0; overflow: hidden; background: #000; font-family: sans-serif; }
+        #instructions {
             position: absolute; top: 20px; left: 20px; color: white;
-            background: rgba(0,0,0,0.7); padding: 20px; border-radius: 12px;
-            border: 1px solid #444; pointer-events: none; z-index: 10;
+            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px;
+            pointer-events: none; z-index: 10;
         }
-        .key { color: #00ffff; font-weight: bold; }
-        video { display: none; }
+        video { display: none; } /* Hide the raw webcam feed */
+        canvas { display: block; }
     </style>
 </head>
 <body>
 
-    <div id="ui">
-        <h2 style="margin-top:0">Gesture Engine</h2>
-        <p><span class="key">Fist → Open Fast:</span> 🎆 FIREWORKS</p>
-        <p><span class="key">Hold Fist:</span> ❤️ HEART</p>
-        <p><span class="key">Neutral Hand:</span> 🪐 SATURN</p>
-        <p><span class="key">Move Hand:</span> Drag Particles</p>
+    <div id="instructions">
+        <h2>Hand Gesture Particles</h2>
+        <p>🖐️ <b>Open Palm:</b> Expand / Randomize</p>
+        <p>✊ <b>Fist:</b> Form Shape (Heart/Saturn)</p>
+        <p>📍 <b>Move Hand:</b> Control Position</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
@@ -32,135 +31,140 @@
 
     <script>
         let scene, camera, renderer, particles, geometry;
-        const PARTICLE_COUNT = 6000;
-        let lastDistance = 0;
+        const PARTICLE_COUNT = 8000;
+        let positions = new Float32Array(PARTICLE_COUNT * 3);
         let currentShape = 'sphere';
 
         // --- 1. Shape Generators ---
-        const getSpherePoint = () => {
-            const phi = Math.random() * Math.PI * 2;
-            const costheta = Math.random() * 2 - 1;
+        function getSpherePoint() {
             const u = Math.random();
-            const theta = Math.acos(costheta);
-            const r = 2 * Math.cbrt(u);
-            return { x: r * Math.sin(theta) * Math.cos(phi), y: r * Math.sin(theta) * Math.sin(phi), z: r * Math.cos(theta) };
-        };
-
-        const getHeartPoint = () => {
-            const t = Math.random() * Math.PI * 2;
+            const v = Math.random();
+            const theta = 2 * Math.PI * u;
+            const phi = Math.acos(2 * v - 1);
             return {
-                x: 0.15 * (16 * Math.pow(Math.sin(t), 3)),
-                y: 0.15 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) + 0.5,
-                z: (Math.random() - 0.5) * 0.5
+                x: 2 * Math.sin(phi) * Math.cos(theta),
+                y: 2 * Math.sin(phi) * Math.sin(theta),
+                z: 2 * Math.cos(phi)
             };
-        };
+        }
 
-        const getSaturnPoint = () => {
-            if (Math.random() > 0.4) return getSpherePoint();
-            const a = Math.random() * Math.PI * 2;
-            const r = 2.5 + Math.random() * 1.5;
-            return { x: Math.cos(a) * r, y: (Math.random() - 0.5) * 0.1, z: Math.sin(a) * r };
-        };
+        function getHeartPoint() {
+            const t = Math.random() * Math.PI * 2;
+            const x = 0.15 * (16 * Math.pow(Math.sin(t), 3));
+            const y = 0.15 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+            return { x, y: y + 0.5, z: (Math.random() - 0.5) * 0.5 };
+        }
 
-        // --- 2. Fireworks Logic ---
-        function triggerFirework() {
-            const posAttr = geometry.attributes.position;
-            const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
-            particles.material.color.copy(color);
-
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                const burstX = (Math.random() - 0.5) * 15;
-                const burstY = (Math.random() - 0.5) * 15;
-                const burstZ = (Math.random() - 0.5) * 15;
-
-                new TWEEN.Tween(posAttr.array)
-                    .to({ [i*3]: burstX, [i*3+1]: burstY, [i*3+2]: burstZ }, 600)
-                    .easing(TWEEN.Easing.Quadratic.Out)
-                    .onComplete(() => morphTo(currentShape, 1500)) // Snap back after explosion
-                    .start();
+        function getSaturnPoint() {
+            if (Math.random() > 0.5) { // The Planet
+                return getSpherePoint();
+            } else { // The Ring
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 2.5 + Math.random() * 1.5;
+                return { x: Math.cos(angle) * radius, y: (Math.random() - 0.5) * 0.2, z: Math.sin(angle) * radius };
             }
         }
 
-        // --- 3. Three.js Setup ---
-        function init() {
+        // --- 2. Initialize Three.js ---
+        function initThree() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            camera.position.z = 10;
+            camera.position.z = 8;
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
             geometry = new THREE.BufferGeometry();
-            const initialPos = new Float32Array(PARTICLE_COUNT * 3);
-            geometry.setAttribute('position', new THREE.BufferAttribute(initialPos, 3));
+            for(let i=0; i<PARTICLE_COUNT*3; i++) positions[i] = (Math.random()-0.5) * 10;
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-            particles = new THREE.Points(geometry, new THREE.PointsMaterial({
-                size: 0.05, transparent: true, blending: THREE.AdditiveBlending, color: 0x00ffff
-            }));
+            const material = new THREE.PointsMaterial({
+                color: 0x00ffff,
+                size: 0.04,
+                transparent: true,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
             scene.add(particles);
-            morphTo('sphere', 0);
         }
 
-        function morphTo(shape, duration = 1000) {
-            currentShape = shape;
+        // --- 3. Morph Logic ---
+        function morphTo(shapeName) {
+            if (currentShape === shapeName) return;
+            currentShape = shapeName;
+            
             const posAttr = geometry.attributes.position;
             for (let i = 0; i < PARTICLE_COUNT; i++) {
-                let target = shape === 'heart' ? getHeartPoint() : (shape === 'saturn' ? getSaturnPoint() : getSpherePoint());
-                new TWEEN.Tween(posAttr.array).to({ [i*3]: target.x, [i*3+1]: target.y, [i*3+2]: target.z }, duration)
-                    .easing(TWEEN.Easing.Exponential.InOut).start();
+                let target;
+                if (shapeName === 'heart') target = getHeartPoint();
+                else if (shapeName === 'saturn') target = getSaturnPoint();
+                else target = getSpherePoint();
+
+                new TWEEN.Tween(posAttr.array)
+                    .to({
+                        [i * 3]: target.x,
+                        [i * 3 + 1]: target.y,
+                        [i * 3 + 2]: target.z
+                    }, 1000)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
             }
+            
+            // Change color based on shape
+            const color = shapeName === 'heart' ? 0xff3366 : (shapeName === 'saturn' ? 0xffcc33 : 0x00ffff);
+            new TWEEN.Tween(particles.material.color).to(new THREE.Color(color), 500).start();
         }
 
-        // --- 4. Hand Tracking & Detection ---
+        // --- 4. Hand Tracking Setup ---
         const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6 });
-
+        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+        
         hands.onResults((results) => {
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const lm = results.multiHandLandmarks[0];
+                const landmarks = results.multiHandLandmarks[0];
                 
-                // Track Movement
-                particles.position.lerp(new THREE.Vector3((lm[9].x - 0.5) * -15, (lm[9].y - 0.5) * -10, 0), 0.1);
+                // Track hand position (Mapping landmarks to 3D Space)
+                const x = (landmarks[9].x - 0.5) * -15; // Invert X for mirror effect
+                const y = (landmarks[9].y - 0.5) * -10;
+                particles.position.lerp(new THREE.Vector3(x, y, 0), 0.1);
 
-                // Calculate Hand Openness
-                const dist = Math.hypot(lm[4].x - lm[20].x, lm[4].y - lm[20].y);
-                const velocity = dist - lastDistance;
+                // Detect Gesture: Distance between thumb and pinky
+                const dx = landmarks[4].x - landmarks[20].x;
+                const dy = landmarks[4].y - landmarks[20].y;
+                const distance = Math.sqrt(dx*dx + dy*dy);
 
-                // TRIGGER: If opening speed is high
-                if (velocity > 0.12) {
-                    triggerFirework();
-                } else {
-                    if (dist < 0.12) morphTo('heart');
-                    else if (dist > 0.35) morphTo('sphere');
-                    else morphTo('saturn');
-                }
-                lastDistance = dist;
+                if (distance < 0.1) morphTo('heart');
+                else if (distance > 0.4) morphTo('sphere');
+                else morphTo('saturn');
             }
         });
 
         const videoElement = document.createElement('video');
-        const cameraCtrl = new Camera(videoElement, {
+        const cameraUtils = new Camera(videoElement, {
             onFrame: async () => { await hands.send({image: videoElement}); },
             width: 640, height: 480
         });
-        cameraCtrl.start();
+        cameraUtils.start();
 
+        // --- 5. Animation Loop ---
         function animate(time) {
             requestAnimationFrame(animate);
             TWEEN.update(time);
-            particles.rotation.y += 0.002;
+            particles.rotation.y += 0.005;
             geometry.attributes.position.needsUpdate = true;
             renderer.render(scene, camera);
         }
 
-        init();
-        animate();
         window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        initThree();
+        animate();
     </script>
 </body>
 </html>
