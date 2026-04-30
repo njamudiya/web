@@ -1,170 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Gesture Particle System</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: sans-serif; }
-        #instructions {
-            position: absolute; top: 20px; left: 20px; color: white;
-            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px;
-            pointer-events: none; z-index: 10;
-        }
-        video { display: none; } /* Hide the raw webcam feed */
-        canvas { display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{overflow:hidden;background:#000}
+canvas{display:block}
+</style>
 </head>
 <body>
 
-    <div id="instructions">
-        <h2>Hand Gesture Particles</h2>
-        <p>🖐️ <b>Open Palm:</b> Expand / Randomize</p>
-        <p>✊ <b>Fist:</b> Form Shape (Heart/Saturn)</p>
-        <p>📍 <b>Move Hand:</b> Control Position</p>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 8000);
+camera.position.set(0, 120, 500);
 
-    <script>
-        let scene, camera, renderer, particles, geometry;
-        const PARTICLE_COUNT = 8000;
-        let positions = new Float32Array(PARTICLE_COUNT * 3);
-        let currentShape = 'sphere';
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
 
-        // --- 1. Shape Generators ---
-        function getSpherePoint() {
-            const u = Math.random();
-            const v = Math.random();
-            const theta = 2 * Math.PI * u;
-            const phi = Math.acos(2 * v - 1);
-            return {
-                x: 2 * Math.sin(phi) * Math.cos(theta),
-                y: 2 * Math.sin(phi) * Math.sin(theta),
-                z: 2 * Math.cos(phi)
-            };
-        }
+window.addEventListener('resize',()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
 
-        function getHeartPoint() {
-            const t = Math.random() * Math.PI * 2;
-            const x = 0.15 * (16 * Math.pow(Math.sin(t), 3));
-            const y = 0.15 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-            return { x, y: y + 0.5, z: (Math.random() - 0.5) * 0.5 };
-        }
+const sun = new THREE.PointLight(0xffffff, 2.5, 0);
+sun.position.set(600, 300, 600);
+scene.add(sun);
 
-        function getSaturnPoint() {
-            if (Math.random() > 0.5) { // The Planet
-                return getSpherePoint();
-            } else { // The Ring
-                const angle = Math.random() * Math.PI * 2;
-                const radius = 2.5 + Math.random() * 1.5;
-                return { x: Math.cos(angle) * radius, y: (Math.random() - 0.5) * 0.2, z: Math.sin(angle) * radius };
-            }
-        }
+scene.add(new THREE.AmbientLight(0x222222));
 
-        // --- 2. Initialize Three.js ---
-        function initThree() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            camera.position.z = 8;
+const starGeo = new THREE.BufferGeometry();
+const starCount = 40000;
+const starPos = new Float32Array(starCount*3);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+for(let i=0;i<starCount;i++){
+  starPos[i*3]=(Math.random()-0.5)*8000;
+  starPos[i*3+1]=(Math.random()-0.5)*8000;
+  starPos[i*3+2]=(Math.random()-0.5)*8000;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
 
-            geometry = new THREE.BufferGeometry();
-            for(let i=0; i<PARTICLE_COUNT*3; i++) positions[i] = (Math.random()-0.5) * 10;
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xffffff,size:1}));
+scene.add(stars);
 
-            const material = new THREE.PointsMaterial({
-                color: 0x00ffff,
-                size: 0.04,
-                transparent: true,
-                blending: THREE.AdditiveBlending
-            });
+const loader = new THREE.TextureLoader();
 
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-        }
+const earth = new THREE.Mesh(
+  new THREE.SphereGeometry(100,128,128),
+  new THREE.MeshPhongMaterial({
+    map: loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+    specularMap: loader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'),
+    emissiveMap: loader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png'),
+    emissive: new THREE.Color(0xffffff),
+    emissiveIntensity: 0.6,
+    specular: new THREE.Color('grey')
+  })
+);
+scene.add(earth);
 
-        // --- 3. Morph Logic ---
-        function morphTo(shapeName) {
-            if (currentShape === shapeName) return;
-            currentShape = shapeName;
-            
-            const posAttr = geometry.attributes.position;
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                let target;
-                if (shapeName === 'heart') target = getHeartPoint();
-                else if (shapeName === 'saturn') target = getSaturnPoint();
-                else target = getSpherePoint();
+const clouds = new THREE.Mesh(
+  new THREE.SphereGeometry(102,128,128),
+  new THREE.MeshPhongMaterial({
+    map: loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png'),
+    transparent:true,
+    opacity:0.8
+  })
+);
+scene.add(clouds);
 
-                new TWEEN.Tween(posAttr.array)
-                    .to({
-                        [i * 3]: target.x,
-                        [i * 3 + 1]: target.y,
-                        [i * 3 + 2]: target.z
-                    }, 1000)
-                    .easing(TWEEN.Easing.Exponential.InOut)
-                    .start();
-            }
-            
-            // Change color based on shape
-            const color = shapeName === 'heart' ? 0xff3366 : (shapeName === 'saturn' ? 0xffcc33 : 0x00ffff);
-            new TWEEN.Tween(particles.material.color).to(new THREE.Color(color), 500).start();
-        }
+const atmosphere = new THREE.Mesh(
+  new THREE.SphereGeometry(108,128,128),
+  new THREE.MeshBasicMaterial({
+    color:0x00aaff,
+    transparent:true,
+    opacity:0.08,
+    side:THREE.BackSide
+  })
+);
+scene.add(atmosphere);
 
-        // --- 4. Hand Tracking Setup ---
-        const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
-        
-        hands.onResults((results) => {
-            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const landmarks = results.multiHandLandmarks[0];
-                
-                // Track hand position (Mapping landmarks to 3D Space)
-                const x = (landmarks[9].x - 0.5) * -15; // Invert X for mirror effect
-                const y = (landmarks[9].y - 0.5) * -10;
-                particles.position.lerp(new THREE.Vector3(x, y, 0), 0.1);
+const moon = new THREE.Mesh(
+  new THREE.SphereGeometry(30,64,64),
+  new THREE.MeshPhongMaterial({
+    map: loader.load('https://threejs.org/examples/textures/planets/moon_1024.jpg')
+  })
+);
+scene.add(moon);
 
-                // Detect Gesture: Distance between thumb and pinky
-                const dx = landmarks[4].x - landmarks[20].x;
-                const dy = landmarks[4].y - landmarks[20].y;
-                const distance = Math.sqrt(dx*dx + dy*dy);
+let dragging=false;
+let prev={x:0,y:0};
 
-                if (distance < 0.1) morphTo('heart');
-                else if (distance > 0.4) morphTo('sphere');
-                else morphTo('saturn');
-            }
-        });
+window.addEventListener('mousedown',e=>{dragging=true;prev.x=e.clientX;prev.y=e.clientY;});
+window.addEventListener('mouseup',()=>dragging=false);
 
-        const videoElement = document.createElement('video');
-        const cameraUtils = new Camera(videoElement, {
-            onFrame: async () => { await hands.send({image: videoElement}); },
-            width: 640, height: 480
-        });
-        cameraUtils.start();
+window.addEventListener('mousemove',e=>{
+  if(dragging){
+    const dx=e.clientX-prev.x;
+    const dy=e.clientY-prev.y;
+    earth.rotation.y+=dx*0.004;
+    earth.rotation.x+=dy*0.004;
+    prev.x=e.clientX;
+    prev.y=e.clientY;
+  }
+});
 
-        // --- 5. Animation Loop ---
-        function animate(time) {
-            requestAnimationFrame(animate);
-            TWEEN.update(time);
-            particles.rotation.y += 0.005;
-            geometry.attributes.position.needsUpdate = true;
-            renderer.render(scene, camera);
-        }
+window.addEventListener('wheel',e=>{
+  camera.position.z+=e.deltaY*0.25;
+  camera.position.z=Math.max(220,Math.min(1500,camera.position.z));
+});
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+function animate(){
+  requestAnimationFrame(animate);
 
-        initThree();
-        animate();
-    </script>
+  const p=starGeo.attributes.position.array;
+  for(let i=0;i<p.length;i+=3){
+    p[i+2]+=4;
+    if(p[i+2]>3000) p[i+2]=-3000;
+  }
+  starGeo.attributes.position.needsUpdate=true;
+
+  earth.rotation.y+=0.0012;
+  clouds.rotation.y+=0.0018;
+
+  const t=Date.now()*0.001;
+  moon.position.x=Math.cos(t*0.25)*320;
+  moon.position.z=Math.sin(t*0.25)*320;
+
+  camera.lookAt(0,0,0);
+
+  renderer.render(scene,camera);
+}
+animate();
+
+console.assert(earth.material.emissiveMap !== undefined);
+console.assert(starGeo.attributes.position.count === 40000);
+console.assert(typeof animate === 'function');
+
+</script>
+
 </body>
 </html>
